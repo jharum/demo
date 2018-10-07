@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Provedor</title>
+ 
+    </h:head>
+    
+
+    <h:body>
+        <h:form id="Empresa">
+            <p:growl id="msg" showDetail="true" life="1000" autoUpdate="true"/>     
+           <p:panel style="margin-bottom:10px;" header="Provedor" toggleable="true"  toggleSpeed="500" closeSpeed="500" widgetVar="panel">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Razon Social:"/>
+                    <p:inputText value="#{ProvedorC.provedor.RAZPROV}" required="true" requiredMessage = " Razon Social"/>
+                    
+                    <p:outputLabel value="Ruc: "/>
+                    <p:inputText value="#{ProvedorC.provedor.RUCPROV}" maxlength="11" required="true"  requiredMessage = " Ruc obligatorio">
+                    <p:keyFilter regEx="/[\d]/"/>
+                    </p:inputText>
+                   
+                    <p:outputLabel value="Direccion: "/>
+                    <p:inputText value="#{ProvedorC.provedor.DIRPROV}" required="true"  requiredMessage = " Direccion Obligatoria"/>
+                   
+                    
+                    <p:outputLabel value="Telefono: "/>
+                    <p:inputText value="#{ProvedorC.provedor.TELFPROV}" required="true"  requiredMessage = " Telefono Obligatoria"/>
+                   
+                     <p:outputLabel value="Ubicacion: "/>
+                     <p:inputText value="#{ProvedorC.provedor.NUMUBI}" required="true"  requiredMessage = " Ubicacion Obligatoria"/>
+                   
+                     <p:commandButton  value="Guardar" actionListener="#{ProvedorC.guardarProvedor()}" update=":Emp:tblEmpresa Empresa" />
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+
+        <h:form id="Emp">
+            <p:dataTable value="#{ProvedorC.lstProvedor}" 
+                         var="provedor"
+                         id="tblEmpresa"
+                         selection="#{ProvedorC.selectedProvedor}"
+                         selectionMode="single"
+                         rowKey="#{provedor.NUMPROV}"
+                         rows="12" paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="6,12,16" reflow="true"
+                         >
+                <f:facet name="header">
+                    LISTADO DE PROVEDORES
+
+                    <p:commandButton id="toggler" type="button" value="Columns" style="float:right" icon="ui-icon-calculator" />
+                    <p:columnToggler datasource="tblEmpresa" trigger="toggler" />
+                    <br/>
+
+                </f:facet>
+                <p:column  headerText="Razon Social" filterBy="#{provedor.RAZPROV}">
+                    <p:outputLabel value="#{provedor.RAZPROV}"/>     
+                </p:column>
+                <p:column headerText="Ruc" filterBy="#{provedor.RUCPROV}">
+                    <p:outputLabel value="#{provedor.RUCPROV}"/>     
+                </p:column>
+                <p:column headerText="Direccion" filterBy="#{provedor.DIRPROV}">
+                    <p:outputLabel value="#{provedor.DIRPROV}"/>     
+                </p:column>
+                <p:column headerText="Telefono" filterBy="#{provedor.TELFPROV}">
+                    <p:outputLabel value="#{provedor.TELFPROV}"/>     
+                </p:column>
+                <p:column headerText="Ubicacion" filterBy="#{provedor.NUMUBI}">
+                    <p:outputLabel value="#{provedor.NUMUBI}"/>     
+                </p:column>
+
+            </p:dataTable> 
+
+            <p:contextMenu for="tblEmpresa">
+                <p:menuitem icon="fa fa-times" value="ELIMINAR" actionListener="#{ProvedorC.eliminarProvedor()}" update="tblEmpresa :Emp">
+                    <p:confirm header="Confirmacion" message="Estas seguro?" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:menuitem icon="fa fa-edit" value="MODIFICAR" oncomplete="PF('dlgModEmpresa').show()" update=":formDialog">
+                    <p:confirm header="Confirmacion" message="Deseas modificar?" icon="ui-icon-alert" />
+                </p:menuitem>
+            </p:contextMenu>
+        </h:form>
+
+        <h:form>           
+            <p:growl id="message" showDetail="true" />
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog id="dlg" header="ACTUALIZAR DATOS" widgetVar="dlgModEmpresa" height="250" width="500" resizable="false" modal="true">
+            <h:form id="formDialog">
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Razon Social: " />
+                    <p:inputText value="#{ProvedorC.selectedProvedor.RAZPROV}" />
+                    <p:outputLabel value="Ruc: " />
+                    <p:inputText value="#{ProvedorC.selectedProvedor.RUCPROV}"/>
+                    <p:outputLabel value="Direccion: " />
+                    <p:inputText value="#{ProvedorC.selectedProvedor.DIRPROV}"/>
+                     <p:outputLabel value="Telefono: " />
+                     <p:inputText value="#{ProvedorC.selectedProvedor.TELFPROV}"/>
+                     <p:outputLabel value="Ubicacion: " />
+                     <p:inputText value="#{ProvedorC.selectedProvedor.NUMUBI}"/>
+          
+                     <p:commandButton value="MODIFICAR:" actionListener="#{ProvedorC.modificarProvedor()}" oncomplete="PF('dlgModEmpresa').hide()" update=":Emp:tblEmpresa"/> 
+                    <p:commandButton value="CANCELAR" oncomplete="PF('dlgModEmpresa').hide()" />
+                </p:panelGrid>
+            </h:form>
+        </p:dialog> 
+                        
+    </h:body>
+</html>
